@@ -77,9 +77,10 @@ class _Login extends State<Login> {
               form: form,
               onChanged: (dynamic response) {
                 this.response = response;
+                log('response: $response');
               },
               actionSave: (data) {
-                print(data);
+                log('response data is: $data');
               },
               imageTap: (data) {
                 log('data: $data');

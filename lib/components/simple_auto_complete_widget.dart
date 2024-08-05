@@ -8,11 +8,12 @@ class AutoCompleteWidget extends StatelessWidget {
   final int position;
   final Map decoration;
   final Map item;
+
   AutoCompleteWidget({
     required this.options,
     this.onChanged,
     required this.position,
-   required this.decoration,
+    required this.decoration,
     required this.item,
   });
 
@@ -23,35 +24,39 @@ class AutoCompleteWidget extends StatelessWidget {
       if (lastSpaceIndex != -1 && lastSpaceIndex < text.length - 1) {
         return text.substring(lastSpaceIndex + 1);
       }
-      return '';
+      return text;
     }
 
-    return Autocomplete<String>(
-      fieldViewBuilder:
-          (context, textEditingController, focusNode, onFieldSubmitted) =>
-              TextField(
-        controller: textEditingController,
-        decoration: item['decoration'] ??
-            decoration![item['key']] ??
-            new InputDecoration(
-              hintText: item['placeholder'] ?? "",
-              helperText: item['helpText'] ?? "",
-            ),
-        //decoration![item['key']],
-        focusNode: focusNode,
-        onSubmitted: (value) {
-          if (onChanged != null) {
-            onChanged!(position, value);
-          }
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Autocomplete<String>(
+        fieldViewBuilder:
+            (context, textEditingController, focusNode, onFieldSubmitted) {
+          textEditingController.text = item['value'] ?? '';
+          return TextField(
+            onChanged: (value) {
+              item['value'] = value;
+              onChanged!(position, value);
+            },
+            controller: textEditingController,
+            decoration: item['decoration'] ??
+                decoration[item['key']] ??
+                InputDecoration(
+                  hintText: item['placeholder'] ?? "",
+                  helperText: item['helpText'] ?? "",
+                ),
+            focusNode: focusNode,
+            onSubmitted: (value) {
+              item['value'] = value;
+              onChanged!(position, value);
+            },
+          );
         },
-      ),
-      optionsBuilder: (TextEditingValue textEditingValue) {
-        log('textEditingValue.text: ${textEditingValue.text}');
-        if (options != null && options!.isNotEmpty) {
-          if (textEditingValue.text.isEmpty) {
-            return const Iterable<String>.empty();
-          }
-          if (textEditingValue.text.split(' ').length > 1) {
+        optionsBuilder: (TextEditingValue textEditingValue) {
+          if (options != null && options!.isNotEmpty) {
+            if (textEditingValue.text.isEmpty) {
+              return const Iterable<String>.empty();
+            }
             final String textAfterLastSpace =
                 extractTextAfterLastSpace(textEditingValue.text);
             if (textAfterLastSpace.isNotEmpty) {
@@ -59,19 +64,30 @@ class AutoCompleteWidget extends StatelessWidget {
                   .toLowerCase()
                   .contains(textAfterLastSpace.toLowerCase()));
             }
-          } else {
-            return options!.where((option) => option
-                .toLowerCase()
-                .contains(textEditingValue.text.toLowerCase()));
           }
-        }
-        return const Iterable<String>.empty();
-      },
-      onSelected: (String selection) {
-        if (onChanged != null) {
-          onChanged!(position, selection);
-        }
-      },
+          return const Iterable<String>.empty();
+        },
+        onSelected: (String selection) {
+          final textEditingController = TextEditingController();
+          final previousText = extractTextBeforeLastSpace(item['value']);
+          final newText =
+              previousText.isNotEmpty ? '$previousText $selection' : selection;
+          item['value'] = newText;
+          onChanged!(position, newText);
+          textEditingController.text = newText;
+          textEditingController.selection = TextSelection.fromPosition(
+            TextPosition(offset: textEditingController.text.length),
+          );
+        },
+      ),
     );
   }
+}
+
+String extractTextBeforeLastSpace(String text) {
+  final lastSpaceIndex = text.lastIndexOf(' ');
+  if (lastSpaceIndex != -1) {
+    return text.substring(0, lastSpaceIndex);
+  }
+  return '';
 }

@@ -61,19 +61,23 @@ class _SimpleImageState extends State<SimpleImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(widget.item['label'] ?? '', style: TextStyle(fontSize: 16)),
-        GestureDetector(
-          onTap: _handleTap,
-          onDoubleTap: _handleDoubleTap,
-          onLongPress: _handleLongPress,
-          child: imagePath.isEmpty
-              ? Image.asset('assets/add_image.png') // Display the selected image
-              : Placeholder(fallbackHeight: 200), // Placeholder for no image
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.item['label'] ?? '', style: TextStyle(fontSize: 16)),
+          GestureDetector(
+            onTap: _handleTap,
+            onDoubleTap: _handleDoubleTap,
+            onLongPress: _handleLongPress,
+            child: imagePath.isEmpty
+                ? Image.asset(
+                    'assets/add_image.png') // Display the selected image
+                : Placeholder(fallbackHeight: 200), // Placeholder for no image
+          ),
+        ],
+      ),
     );
   }
 }
