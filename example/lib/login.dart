@@ -32,6 +32,11 @@ class _Login extends State<Login> {
         'label': 'Check AutoComplete',
       },
       {
+        'key': 'autocomplete2',
+        'type': 'AutoComplete',
+        'label': 'Check AutoComplete',
+      },
+      {
         "key": "image1",
         "type": "Image",
         "label": "Profile Picture",
@@ -57,6 +62,8 @@ class _Login extends State<Login> {
     'autocomplete1': const InputDecoration(
         prefixIcon: Icon(Icons.autofps_select_rounded),
         border: OutlineInputBorder()),
+    'autocomplete2': const InputDecoration(
+        prefixIcon: Icon(Icons.av_timer_sharp), border: OutlineInputBorder()),
   };
 
   @override
@@ -85,15 +92,10 @@ class _Login extends State<Login> {
               imageTap: (data) {
                 log('data: $data');
               },
-              autoCompleteOptions: const [
-                'ahmed',
-                'ali',
-                'mohamed',
-                'khaled',
-                'omar',
-                'adel',
-                'kalil',
-              ],
+              autoCompleteOptions: const {
+                'autocomplete1': ['ahmed', 'ali', 'mohamed', 'khaled'],
+                'autocomplete2': ['1', '2', '3', '4']
+              },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               buttonSave: Container(
                 height: 40.0,

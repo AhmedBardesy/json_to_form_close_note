@@ -1,16 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 class AutoCompleteWidget extends StatelessWidget {
-  final List<String>? options;
+  final Map<String, List>? maapOptions;
   final Function? onChanged;
   final int position;
   final Map decoration;
   final Map item;
 
   AutoCompleteWidget({
-    required this.options,
+    required this.maapOptions,
     this.onChanged,
     required this.position,
     required this.decoration,
@@ -19,6 +17,8 @@ class AutoCompleteWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String>? options = List<String>.from(maapOptions![item['key']] ?? []);
+    ;
     String extractTextAfterLastSpace(String text) {
       final lastSpaceIndex = text.lastIndexOf(' ');
       if (lastSpaceIndex != -1 && lastSpaceIndex < text.length - 1) {

@@ -35,7 +35,7 @@ class JsonSchema extends StatefulWidget {
   final ValueChanged<dynamic> onChanged;
   final AutovalidateMode? autovalidateMode;
   final Function? imageTap;
-  final List<String>? autoCompleteOptions;
+  final Map<String , List>? autoCompleteOptions;
 
   @override
   _CoreFormState createState() =>
@@ -154,7 +154,7 @@ class _CoreFormState extends State<JsonSchema> {
         listWidget.add(AutoCompleteWidget(
           item: item,
           decoration: widget.decorations,
-          options: widget.autoCompleteOptions, 
+          maapOptions: widget.autoCompleteOptions, // Pass options
           onChanged: onChange, 
           position: count,
         ));
