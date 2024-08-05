@@ -2,7 +2,9 @@ library json_to_form;
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:json_to_form/components/simple_image.dart';
 import 'components/index.dart';
+import 'components/simple_auto_complete_widget.dart';
 
 class JsonSchema extends StatefulWidget {
   const JsonSchema({
@@ -17,6 +19,8 @@ class JsonSchema extends StatefulWidget {
     this.keyboardTypes = const {},
     this.buttonSave,
     this.actionSave,
+    this.imageTap,
+    this.autoCompleteOptions,
   });
 
   final Map errorMessages;
@@ -30,6 +34,8 @@ class JsonSchema extends StatefulWidget {
   final Function? actionSave;
   final ValueChanged<dynamic> onChanged;
   final AutovalidateMode? autovalidateMode;
+  final Function? imageTap;
+  final List<String>? autoCompleteOptions;
 
   @override
   _CoreFormState createState() =>
@@ -133,6 +139,22 @@ class _CoreFormState extends State<JsonSchema> {
           errorMessages: widget.errorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
+        ));
+      }
+      if (item['type'] == "Image") {
+        // Add this block
+        listWidget.add(SimpleImage(
+          item: item,
+          // onChange: onChange,
+          position: count,
+          imageTap: widget.imageTap,
+        ));
+      }
+      if (item['type'] == "AutoComplete") {
+        listWidget.add(AutoCompleteWidget(
+          options: widget.autoCompleteOptions, // Pass options
+          onChanged: onChange, // Pass callback
+          position: count,
         ));
       }
     }

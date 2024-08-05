@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:json_to_form/json_schema.dart';
@@ -13,11 +14,27 @@ class _Login extends State<Login> {
   String form = json.encode({
     'fields': [
       {
+        "key": "image2",
+        "type": "Image",
+        "label": "Profile Picture",
+        "value": ""
+      },
+      {
         'key': 'input1',
         'type': 'Input',
         'label': 'Username',
         'placeholder': "Enter Your Username",
         'required': true
+      },
+      {
+        'key': 'input2',
+        'type': 'AutoComplete',
+      },
+      {
+        "key": "image1",
+        "type": "Image",
+        "label": "Profile Picture",
+        "value": ""
       },
       {
         'key': 'password1',
@@ -60,6 +77,18 @@ class _Login extends State<Login> {
               actionSave: (data) {
                 print(data);
               },
+              imageTap: (data) {
+                log('data: $data');
+              },
+              autoCompleteOptions: const [
+                'ahmed',
+                'ali',
+                'mohamed',
+                'khaled',
+                'omar',
+                'adel',
+                'kalil',
+              ],
               autovalidateMode: AutovalidateMode.onUserInteraction,
               buttonSave: Container(
                 height: 40.0,
