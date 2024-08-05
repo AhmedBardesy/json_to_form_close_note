@@ -152,6 +152,8 @@ class _CoreFormState extends State<JsonSchema> {
       }
       if (item['type'] == "AutoComplete") {
         listWidget.add(AutoCompleteWidget(
+          item: item,
+          decoration: widget.decorations,
           options: widget.autoCompleteOptions, // Pass options
           onChanged: onChange, // Pass callback
           position: count,

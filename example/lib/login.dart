@@ -27,8 +27,9 @@ class _Login extends State<Login> {
         'required': true
       },
       {
-        'key': 'input2',
+        'key': 'autocomplete1',
         'type': 'AutoComplete',
+        'label': 'Check AutoComplete',
       },
       {
         "key": "image1",
@@ -53,6 +54,9 @@ class _Login extends State<Login> {
     ),
     'password1': const InputDecoration(
         prefixIcon: Icon(Icons.security), border: OutlineInputBorder()),
+    'autocomplete1': const InputDecoration(
+        prefixIcon: Icon(Icons.autofps_select_rounded),
+        border: OutlineInputBorder()),
   };
 
   @override

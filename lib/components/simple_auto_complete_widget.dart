@@ -6,10 +6,14 @@ class AutoCompleteWidget extends StatelessWidget {
   final List<String>? options;
   final Function? onChanged;
   final int position;
+  final Map decoration;
+  final Map item;
   AutoCompleteWidget({
     required this.options,
     this.onChanged,
     required this.position,
+   required this.decoration,
+    required this.item,
   });
 
   @override
@@ -23,6 +27,24 @@ class AutoCompleteWidget extends StatelessWidget {
     }
 
     return Autocomplete<String>(
+      fieldViewBuilder:
+          (context, textEditingController, focusNode, onFieldSubmitted) =>
+              TextField(
+        controller: textEditingController,
+        decoration: item['decoration'] ??
+            decoration![item['key']] ??
+            new InputDecoration(
+              hintText: item['placeholder'] ?? "",
+              helperText: item['helpText'] ?? "",
+            ),
+        //decoration![item['key']],
+        focusNode: focusNode,
+        onSubmitted: (value) {
+          if (onChanged != null) {
+            onChanged!(position, value);
+          }
+        },
+      ),
       optionsBuilder: (TextEditingValue textEditingValue) {
         log('textEditingValue.text: ${textEditingValue.text}');
         if (options != null && options!.isNotEmpty) {
