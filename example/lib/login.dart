@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:example/model/tag_model/tag_model.dart';
 import 'package:flutter/material.dart';
 import 'package:json_to_form/json_schema.dart';
 
@@ -30,11 +31,13 @@ class _Login extends State<Login> {
         'key': 'autocomplete1',
         'type': 'AutoComplete',
         'label': 'Check AutoComplete',
+        'ref': 'tagBox:eval'
       },
       {
         'key': 'autocomplete2',
         'type': 'AutoComplete',
         'label': 'Check AutoComplete',
+        'ref': 'tagBox:sop'
       },
       {
         "key": "image1",
@@ -80,6 +83,7 @@ class _Login extends State<Login> {
               style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
             ),
             JsonSchema(
+              fetchOptions: fetchOptions,
               decorations: decorations,
               form: form,
               onChanged: (dynamic response) {
@@ -92,10 +96,10 @@ class _Login extends State<Login> {
               imageTap: (data) {
                 log('data: $data');
               },
-              autoCompleteOptions: const {
-                'autocomplete1': ['ahmed', 'ali', 'mohamed', 'khaled'],
-                'autocomplete2': ['1', '2', '3', '4']
-              },
+              // autoCompleteOptions: const {
+              //   'autocomplete1': ['ahmed', 'ali', 'mohamed', 'khaled'],
+              //   'autocomplete2': ['1', '2', '3', '4']
+              // },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               buttonSave: Container(
                 height: 40.0,
@@ -112,4 +116,67 @@ class _Login extends State<Login> {
       ),
     );
   }
+}
+
+Future<List<String>> fetchOptions(Map data) async {
+  // Simulate fetching data from a data source based on the ref
+  // await Future.delayed(Duration(seconds: 1)); // Simulating network delay
+
+  // Split the ref to get the table name and type
+  String ref = data['ref'];
+  String text = data['text'];
+  String optionTableName = ref.split(':').first;
+  String optionTableType = ref.split(':').last;
+
+  List<String> options = [];
+
+  // Switch case based on table name
+  switch (optionTableName) {
+    case 'tagBox':
+      // Nested switch case based on type
+      switch (optionTableType) {
+        case 'eval':
+          options = tagBox
+              .where((element) => element.type == 'eval')
+              .map((e) => e.name)
+              .toList();
+          break;
+        case 'sop':
+          options = tagBox
+              .where((element) => element.type == 'sop')
+              .map((e) => e.name)
+              .toList();
+          break;
+        case 'place':
+          options = tagBox
+              .where((element) => element.type == 'place')
+              .map((e) => e.name)
+              .toList();
+          break;
+        case 'org':
+          options = tagBox
+              .where((element) => element.type == 'org')
+              .map((e) => e.name)
+              .toList();
+          break;
+        case 'field':
+          options = tagBox
+              .where((element) => element.type == 'field')
+              .map((e) => e.name)
+              .toList();
+          break;
+        default:
+          options = []; // Return an empty list if type does not match
+          break;
+      }
+      break;
+    default:
+      options = []; // Return an empty list if table name does not match
+      break;
+  }
+
+  // Filter options based on the text
+  return options
+      .where((name) => name.toLowerCase().contains(text.toLowerCase()))
+      .toList();
 }

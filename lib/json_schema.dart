@@ -20,7 +20,8 @@ class JsonSchema extends StatefulWidget {
     this.buttonSave,
     this.actionSave,
     this.imageTap,
-    this.autoCompleteOptions,
+    // this.autoCompleteOptions, 
+    this.fetchOptions,
   });
 
   final Map errorMessages;
@@ -35,7 +36,8 @@ class JsonSchema extends StatefulWidget {
   final ValueChanged<dynamic> onChanged;
   final AutovalidateMode? autovalidateMode;
   final Function? imageTap;
-  final Map<String , List>? autoCompleteOptions;
+  // final Map<String , List>? autoCompleteOptions;
+  final Future<List<String>> Function(Map ref)? fetchOptions;
 
   @override
   _CoreFormState createState() =>
@@ -154,9 +156,10 @@ class _CoreFormState extends State<JsonSchema> {
         listWidget.add(AutoCompleteWidget(
           item: item,
           decoration: widget.decorations,
-          maapOptions: widget.autoCompleteOptions, // Pass options
+          // maapOptions: widget.autoCompleteOptions, // Pass options
           onChanged: onChange, 
           position: count,
+          fetchOptions: widget.fetchOptions,
         ));
       }
     }

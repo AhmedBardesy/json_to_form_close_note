@@ -1,12 +1,20 @@
-
+import 'package:example/model/tag_model/tag_model.dart';
 import 'package:flutter/material.dart';
+// import 'package:hive_flutter/adapters.dart';
 import 'all_fields.dart';
 import 'login.dart';
 import 'register.dart';
 import 'register_with_map.dart';
 import 'all_fields_v1.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Hive.initFlutter();
+  // Hive.registerAdapter(tagmodelAdapter());
+  // tagBox = await Hive.openBox<tag_model>('tagBox');
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -78,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: Column(children: <Widget>[
           TextButton(
-            onPressed: () { 
+            onPressed: () {
               Navigator.pushNamed(context, '/allfieldsv1');
             },
             child: const Text("All Fields V1"),

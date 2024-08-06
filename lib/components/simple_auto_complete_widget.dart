@@ -1,24 +1,36 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
-class AutoCompleteWidget extends StatelessWidget {
-  final Map<String, List>? maapOptions;
+class AutoCompleteWidget extends StatefulWidget {
   final Function? onChanged;
   final int position;
   final Map decoration;
   final Map item;
+  final Future<List<String>> Function(Map ref)? fetchOptions;
 
   AutoCompleteWidget({
-    required this.maapOptions,
     this.onChanged,
     required this.position,
     required this.decoration,
     required this.item,
+    this.fetchOptions,
   });
 
   @override
+  State<AutoCompleteWidget> createState() => _AutoCompleteWidgetState();
+}
+
+class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
+  final StringTagController stringTagController = StringTagController();
+  List<String> options = <String>[];
+
+  @override
   Widget build(BuildContext context) {
-    List<String>? options = List<String>.from(maapOptions![item['key']] ?? []);
-    ;
+    List<String> lowerTagsListNames =
+        options.map((e) => e.toLowerCase()).toList();
+    log('bbuuiiild item : ${stringTagController.getTags} | options : $options');
+
     String extractTextAfterLastSpace(String text) {
       final lastSpaceIndex = text.lastIndexOf(' ');
       if (lastSpaceIndex != -1 && lastSpaceIndex < text.length - 1) {
@@ -30,37 +42,204 @@ class AutoCompleteWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 5),
       child: Autocomplete<String>(
+        optionsViewBuilder: (context, onSelected, options) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Material(
+                elevation: 4.0,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  child: SingleChildScrollView(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Wrap(
+                            children: options.map((String option) {
+                              bool disable =
+                                  stringTagController.getTags!.contains(option)
+                                      ? true
+                                      : false;
+                              log('disable : $disable stringTagController.getTags : ${stringTagController.getTags}');
+                              return TextButton(
+                                onPressed: () {
+                                  onSelected(option);
+                                  stringTagController.onTagSubmitted(option);
+                                  widget.item['value'] = option;
+                                  widget.onChanged!(widget.position, option);
+
+                                  setState(() {});
+                                  log('Autocomplete widget onpressed : $option ,stringTagController tags : ${stringTagController.getTags}');
+                                },
+                                child: OptionBuiderItem(
+                                  color: disable ? Colors.grey : Colors.black,
+                                  option: option,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
         fieldViewBuilder:
             (context, textEditingController, focusNode, onFieldSubmitted) {
-          textEditingController.text = item['value'] ?? '';
-          return TextField(
-            onChanged: (value) {
-              item['value'] = value;
-              onChanged!(position, value);
-            },
-            controller: textEditingController,
-            decoration: item['decoration'] ??
-                decoration[item['key']] ??
-                InputDecoration(
-                  hintText: item['placeholder'] ?? "",
-                  helperText: item['helpText'] ?? "",
-                ),
+          // textEditingController.text = widget.item['value'] ?? '';
+          return TextFieldTags<String>(
+            textfieldTagsController: stringTagController,
+            textEditingController: textEditingController,
             focusNode: focusNode,
-            onSubmitted: (value) {
-              item['value'] = value;
-              onChanged!(position, value);
+            // initialTags: widget.item['value'] != null
+            //     ? widget.item['value'].toString().split(' ').toList()
+            //     : [],
+            validator: (String tag) {
+              log('Autocomplete widget validator options : $options');
+              log('validator tag  $tag');
+              // log('validator tagsList  $tagsListNames');
+              String lowerTag = tag.toLowerCase();
+
+              if (!options
+                  .map((e) => e.toLowerCase())
+                  .toList()
+                  .contains(lowerTag)) {
+                // showSnackBar('Tag not allowed', context);
+                return 'Tag not allowed';
+              }
+              if (stringTagController.getTags!.any(
+                  (existingTag) => existingTag.toLowerCase() == lowerTag)) {
+                // showSnackBar('You\'ve already entered this tag', context);
+                return 'You\'ve already entered this tag';
+              }
+
+              return null;
+            },
+            textSeparators: const [',', ' '],
+            letterCase: LetterCase.normal,
+            inputFieldBuilder: (context, inputFieldValues) {
+              log('inputFieldValues.tags.isEmpty : ${inputFieldValues.tags.isEmpty}');
+              return TextField(
+                controller: inputFieldValues.textEditingController,
+                focusNode: inputFieldValues.focusNode,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    hintText:
+                        inputFieldValues.tags.isNotEmpty ? '' : "Add Tags !",
+                    hintStyle: const TextStyle(color: Colors.black),
+                    errorText: inputFieldValues.error,
+                    prefixIconConstraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.74),
+                    prefixIcon: inputFieldValues.tags.isNotEmpty
+                        ? SingleChildScrollView(
+                            controller: inputFieldValues.tagScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: inputFieldValues.tags.map((tag) {
+                                log('tagVVV: $tag');
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      color: Colors.black,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0, vertical: 4.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          tag,
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                        const SizedBox(width: 4.0),
+                                        InkWell(
+                                          child: const Icon(
+                                            Icons.cancel,
+                                            size: 14.0,
+                                            color: Color.fromARGB(
+                                                255, 233, 233, 233),
+                                          ),
+                                          onTap: () {
+                                            inputFieldValues.onTagRemoved(tag);
+                                            setState(() {});
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        : null),
+                onChanged: (text) {
+                  // widget.item['value'] = value;
+                  // widget.onChanged!(widget.position, value);
+                  // setState(() {});
+                  log('Autocomplete widget onChangedd text: $text || lowerTagsListNames $lowerTagsListNames');
+                  String lowerText = text.toLowerCase();
+                  log('on changed text $text');
+                  if (lowerText.split(' ').length > 1 &&
+                      !options
+                          .map((e) => e.toLowerCase())
+                          .toList()
+                          .contains(lowerText.trim())) {
+                    inputFieldValues.textEditingController.clear();
+                    // showSnackBar('Tag not allowed !!', context);
+                  }
+                  if (lowerText.split(' ').length > 1 ||
+                      options
+                          .map((e) => e.toLowerCase())
+                          .toList()
+                          .contains(lowerText.trim())) {
+                    if (options
+                        .map((e) => e.toLowerCase())
+                        .toList()
+                        .contains(lowerText.trim())) {
+                      stringTagController.onTagSubmitted(lowerText.trim());
+                      ;
+                      inputFieldValues.textEditingController.clear();
+                      log('Autocomplete widget ${stringTagController.getTags}');
+                    }
+                  }
+                },
+                onSubmitted: (value) {
+                  inputFieldValues.textEditingController.clear();
+                  log('Autocomplete widget onSubmitted : $value');
+                  setState(() {});
+                },
+              );
             },
           );
         },
-        optionsBuilder: (TextEditingValue textEditingValue) {
-          if (options != null && options!.isNotEmpty) {
+        optionsBuilder: (TextEditingValue textEditingValue) async {
+          String ref = widget.item['ref'];
+          log('ref $ref');
+          final String textAfterLastSpace =
+              extractTextAfterLastSpace(textEditingValue.text);
+          options = await widget
+              .fetchOptions!({'ref': ref, 'text': textAfterLastSpace});
+          log('options $options');
+          if (options.isNotEmpty) {
             if (textEditingValue.text.isEmpty) {
               return const Iterable<String>.empty();
             }
             final String textAfterLastSpace =
                 extractTextAfterLastSpace(textEditingValue.text);
             if (textAfterLastSpace.isNotEmpty) {
-              return options!.where((option) => option
+              return options.where((option) => option
                   .toLowerCase()
                   .contains(textAfterLastSpace.toLowerCase()));
             }
@@ -68,16 +247,7 @@ class AutoCompleteWidget extends StatelessWidget {
           return const Iterable<String>.empty();
         },
         onSelected: (String selection) {
-          final textEditingController = TextEditingController();
-          final previousText = extractTextBeforeLastSpace(item['value']);
-          final newText =
-              previousText.isNotEmpty ? '$previousText $selection' : selection;
-          item['value'] = newText;
-          onChanged!(position, newText);
-          textEditingController.text = newText;
-          textEditingController.selection = TextSelection.fromPosition(
-            TextPosition(offset: textEditingController.text.length),
-          );
+          log('Autocomplete widget onSelected: $selection');
         },
       ),
     );
@@ -91,3 +261,30 @@ String extractTextBeforeLastSpace(String text) {
   }
   return '';
 }
+
+class OptionBuiderItem extends StatelessWidget {
+  const OptionBuiderItem({
+    required this.option,
+    required this.color,
+  });
+  final String option;
+  final Color color;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+          color: color),
+      margin: const EdgeInsets.only(right: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+      child: Text(
+        option,
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+}
+
+List<String> topRelatedTagsList = [];

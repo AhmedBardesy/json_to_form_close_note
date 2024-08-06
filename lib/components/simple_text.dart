@@ -61,7 +61,7 @@ class _SimpleText extends State<SimpleText> {
           label,
           new TextFormField(
             controller: null,
-            initialValue: item['value'] ?? null,
+            initialValue: item['value'] ?? null, 
             decoration: item['decoration'] ??
                 widget.decorations[item['key']] ??
                 new InputDecoration(
