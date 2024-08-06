@@ -26,12 +26,12 @@ class AutoCompleteWidget extends StatefulWidget {
 
 class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
   final StringTagController stringTagController = StringTagController();
-  List<OptionWithColor> options = <OptionWithColor>[];
+  List<OptionWithColor>? options = <OptionWithColor>[];
 
   @override
   Widget build(BuildContext context) {
     List<String> lowerTagsListNames =
-        options.map((e) => e.option.toLowerCase()).toList();
+        options!.map((e) => e.option.toLowerCase()).toList();
     log('bbuuiiild item : ${stringTagController.getTags} | options : $options');
 
     String extractTextAfterLastSpace(String text) {
@@ -112,7 +112,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
               // log('validator tagsList  $tagsListNames');
               String lowerTag = tag.toLowerCase();
 
-              if (!options
+              if (!options!
                   .map((e) => e.option.toLowerCase())
                   .toList()
                   .contains(lowerTag)) {
@@ -162,12 +162,15 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                                     decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10.0)),
-                                      color: options
-                                          .where((element) =>
-                                              element.option.toLowerCase() ==
-                                              tag.toLowerCase())
-                                          .first
-                                          .color,
+                                      color: options!.isEmpty
+                                          ? Colors.grey
+                                          : options!
+                                              .where((element) =>
+                                                  element.option
+                                                      .toLowerCase() ==
+                                                  tag.toLowerCase())
+                                              .first
+                                              .color,
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10.0, vertical: 4.0),
@@ -215,7 +218,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                   String lowerText = text.toLowerCase();
                   log('on changed text $text');
                   if (lowerText.split(' ').length > 1 &&
-                      !options
+                      !options!
                           .map((e) => e.option.toLowerCase())
                           .toList()
                           .contains(lowerText.trim())) {
@@ -227,11 +230,11 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                     // showSnackBar('Tag not allowed !!', context);
                   }
                   if (lowerText.split(' ').length > 1 ||
-                      options
+                      options!
                           .map((e) => e..option.toLowerCase())
                           .toList()
                           .contains(lowerText.trim())) {
-                    if (options
+                    if (options!
                         .map((e) => e.option.toLowerCase())
                         .toList()
                         .contains(lowerText.trim())) {
@@ -263,14 +266,14 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
           options = await widget
               .fetchOptions!({'ref': ref, 'text': textAfterLastSpace});
           log('options $options');
-          if (options.isNotEmpty) {
+          if (options!.isNotEmpty) {
             if (textEditingValue.text.isEmpty) {
               return const Iterable<OptionWithColor>.empty();
             }
             final String textAfterLastSpace =
                 extractTextAfterLastSpace(textEditingValue.text);
             if (textAfterLastSpace.isNotEmpty) {
-              return options
+              return options!
                   .where((option) => option.option
                       .toLowerCase()
                       .contains(textAfterLastSpace.toLowerCase()))
