@@ -84,6 +84,7 @@ class _Login extends State<Login> {
             ),
             JsonSchema(
               errorMessage: (p0) {
+                showSnackBar(p0['error'], context);
                 log('error: $p0');
               },
               fetchOptions: fetchOptionsItems,
@@ -183,8 +184,8 @@ String savedForm = '';
 //       .toList();
 // }
 
-
-Future<List<OptionWithColor>> fetchOptionsItems(Map<dynamic, dynamic> data) async {
+Future<List<OptionWithColor>> fetchOptionsItems(
+    Map<dynamic, dynamic> data) async {
   String ref = data['ref'];
   String text = data['text'];
   String optionTableName = ref.split(':').first;
@@ -233,18 +234,19 @@ Future<List<OptionWithColor>> fetchOptionsItems(Map<dynamic, dynamic> data) asyn
       }
       break;
     default:
-      optionsWithColors = []; // Return an empty list if table name does not match
+      optionsWithColors =
+          []; // Return an empty list if table name does not match
       break;
   }
 
   // Filter options based on the text
   return optionsWithColors
-      .where((option) => option.option.toLowerCase().contains(text.toLowerCase()))
+      .where(
+          (option) => option.option.toLowerCase().contains(text.toLowerCase()))
       .toList();
 }
 
-
-Color colorItem(String tag,currenttagid ) {
+Color colorItem(String tag, currenttagid) {
   // var currenttagid =
   //     tagList.where((element) => element.name == tag).first.type[0];
 
@@ -258,4 +260,20 @@ Color colorItem(String tag,currenttagid ) {
                   ? Colors.red
                   : Colors.green;
   return optionColor;
+}
+
+void showSnackBar(String message, BuildContext context) {
+  final snackBar = SnackBar(
+    backgroundColor: Colors.grey,
+    behavior: SnackBarBehavior.floating,
+    shape: const StadiumBorder(),
+    elevation: 30,
+    content: Center(
+      child: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+    ),
+  );
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
