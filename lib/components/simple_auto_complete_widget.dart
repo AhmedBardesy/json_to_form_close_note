@@ -70,8 +70,10 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                                 onPressed: () {
                                   onSelected(option);
                                   stringTagController.onTagSubmitted(option);
-                                  widget.item['value'] = option;
-                                  widget.onChanged!(widget.position, option);
+                                  var tags = stringTagController.getTags;
+                                  String savedTags = tags!.join(' ');
+                                  widget.item['value'] = savedTags;
+                                  widget.onChanged!(widget.position, savedTags);
 
                                   setState(() {});
                                   log('Autocomplete widget onpressed : $option ,stringTagController tags : ${stringTagController.getTags}');
@@ -124,7 +126,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                   'key': widget.item['key'],
                   'error': 'You\'ve already entered this tag'
                 });
-                return 'You\'ve already entered this tag';
+                return '';
               }
 
               return null;
@@ -181,6 +183,12 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                                           ),
                                           onTap: () {
                                             inputFieldValues.onTagRemoved(tag);
+                                            var tags =
+                                                stringTagController.getTags;
+                                            String savedTags = tags!.join(' ');
+                                            widget.item['value'] = savedTags;
+                                            widget.onChanged!(
+                                                widget.position, savedTags);
                                             setState(() {});
                                           },
                                         )
@@ -205,6 +213,10 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                           .toList()
                           .contains(lowerText.trim())) {
                     inputFieldValues.textEditingController.clear();
+                    widget.errorMessages!({
+                      'key': widget.item['key'],
+                      'error': 'Tag not allowed'
+                    });
                     // showSnackBar('Tag not allowed !!', context);
                   }
                   if (lowerText.split(' ').length > 1 ||
@@ -217,9 +229,13 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                         .toList()
                         .contains(lowerText.trim())) {
                       stringTagController.onTagSubmitted(lowerText.trim());
-                      ;
+
                       inputFieldValues.textEditingController.clear();
                       log('Autocomplete widget ${stringTagController.getTags}');
+                      var tags = stringTagController.getTags;
+                      String savedTags = tags!.join(' ');
+                      widget.item['value'] = savedTags;
+                      widget.onChanged!(widget.position, savedTags);
                     }
                   }
                 },
