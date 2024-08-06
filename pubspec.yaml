@@ -14,8 +14,7 @@ dev_dependencies:
 
 flutter:
 
-  assets:
-    - assets/add_image.png
+
 
 
 environment:

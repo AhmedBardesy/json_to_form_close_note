@@ -19,7 +19,7 @@ class _Login extends State<Login> {
         "type": "Image",
         "label": "Profile Picture",
         "value": "",
-        "spareImage":"assets/add_image.png",
+        "spareImage":"example/assets/imagesss/add_image.png",
       },
       {
         'key': 'input1',
@@ -41,7 +41,7 @@ class _Login extends State<Login> {
         'ref': 'tagBox:sop'
       },
       {
-        "spareImage":"assets/add_image.png",
+        "spareImage":"example/assets/imagesss/add_image.png",
         "key": "image1",
         "type": "Image",
         "label": "Profile Picture",
