@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class SimpleImage extends StatefulWidget {
@@ -61,6 +64,10 @@ class _SimpleImageState extends State<SimpleImage> {
 
   @override
   Widget build(BuildContext context) {
+    log('spareImage ${widget.item['spareImage']}');
+    log('spareImage ${widget.item['key']}');
+    log('spareImage ${widget.item['type']}');
+    log('spareImage ${widget.item['value']}');
     return Padding(
       padding: const EdgeInsets.only(top: 5),
       child: Column(
@@ -73,8 +80,8 @@ class _SimpleImageState extends State<SimpleImage> {
             onLongPress: _handleLongPress,
             child: imagePath.isEmpty
                 ? Image.asset(
-                    'assets/add_image.png') // Display the selected image
-                : Placeholder(fallbackHeight: 200), // Placeholder for no image
+                    widget.item['spareImage']) // Display the selected image
+                : Image.file(File(imagePath)), // Placeholder for no image
           ),
         ],
       ),
