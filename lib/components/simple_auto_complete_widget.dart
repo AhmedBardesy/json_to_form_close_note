@@ -167,7 +167,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                                           : options!
                                               .where((element) =>
                                                   element.option
-                                                      .toLowerCase() ==
+                                                      .toLowerCase() == 
                                                   tag.toLowerCase())
                                               .first
                                               .color,
