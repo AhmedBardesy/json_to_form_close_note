@@ -83,6 +83,9 @@ class _Login extends State<Login> {
               style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
             ),
             JsonSchema(
+              errorMessage: (p0) {
+                log('error: $p0');
+              },
               fetchOptions: fetchOptions,
               decorations: decorations,
               form: form,
@@ -96,10 +99,6 @@ class _Login extends State<Login> {
               imageTap: (data) {
                 log('data: $data');
               },
-              // autoCompleteOptions: const {
-              //   'autocomplete1': ['ahmed', 'ali', 'mohamed', 'khaled'],
-              //   'autocomplete2': ['1', '2', '3', '4']
-              // },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               buttonSave: Container(
                 height: 40.0,

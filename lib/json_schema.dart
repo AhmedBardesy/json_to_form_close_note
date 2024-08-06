@@ -13,7 +13,7 @@ class JsonSchema extends StatefulWidget {
     this.padding,
     this.formMap,
     this.autovalidateMode,
-    this.errorMessages = const {},
+    this.mapErrorMessages = const {},
     this.validations = const {},
     this.decorations = const {},
     this.keyboardTypes = const {},
@@ -21,10 +21,10 @@ class JsonSchema extends StatefulWidget {
     this.actionSave,
     this.imageTap,
     // this.autoCompleteOptions, 
-    this.fetchOptions,
+    this.fetchOptions, this.errorMessage,
   });
 
-  final Map errorMessages;
+  final Map mapErrorMessages;
   final Map validations;
   final Map decorations;
   final Map keyboardTypes;
@@ -36,6 +36,7 @@ class JsonSchema extends StatefulWidget {
   final ValueChanged<dynamic> onChanged;
   final AutovalidateMode? autovalidateMode;
   final Function? imageTap;
+   final Function(Map<dynamic, dynamic>)? errorMessage;
   // final Map<String , List>? autoCompleteOptions;
   final Future<List<String>> Function(Map ref)? fetchOptions;
 
@@ -78,7 +79,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChange: onChange,
           position: count,
           decorations: widget.decorations,
-          errorMessages: widget.errorMessages,
+          errorMessages: widget.mapErrorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
         ));
@@ -90,7 +91,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChange: onChange,
           position: count,
           decorations: widget.decorations,
-          errorMessages: widget.errorMessages,
+          errorMessages: widget.mapErrorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
         ));
@@ -102,7 +103,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChange: onChange,
           position: count,
           decorations: widget.decorations,
-          errorMessages: widget.errorMessages,
+          errorMessages: widget.mapErrorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
         ));
@@ -114,7 +115,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChange: onChange,
           position: count,
           decorations: widget.decorations,
-          errorMessages: widget.errorMessages,
+          errorMessages: widget.mapErrorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
         ));
@@ -126,7 +127,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChange: onChange,
           position: count,
           decorations: widget.decorations,
-          errorMessages: widget.errorMessages,
+          errorMessages: widget.mapErrorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
         ));
@@ -138,7 +139,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChange: onChange,
           position: count,
           decorations: widget.decorations,
-          errorMessages: widget.errorMessages,
+          errorMessages: widget.mapErrorMessages,
           validations: widget.validations,
           keyboardTypes: widget.keyboardTypes,
         ));
@@ -160,6 +161,7 @@ class _CoreFormState extends State<JsonSchema> {
           onChanged: onChange, 
           position: count,
           fetchOptions: widget.fetchOptions,
+          errorMessages: widget.errorMessage,
         ));
       }
     }

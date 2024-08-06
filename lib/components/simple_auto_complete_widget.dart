@@ -7,6 +7,7 @@ class AutoCompleteWidget extends StatefulWidget {
   final int position;
   final Map decoration;
   final Map item;
+  final Function(Map errorMessage)? errorMessages;
   final Future<List<String>> Function(Map ref)? fetchOptions;
 
   AutoCompleteWidget({
@@ -15,6 +16,7 @@ class AutoCompleteWidget extends StatefulWidget {
     required this.decoration,
     required this.item,
     this.fetchOptions,
+    this.errorMessages,
   });
 
   @override
@@ -111,11 +113,17 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                   .toList()
                   .contains(lowerTag)) {
                 // showSnackBar('Tag not allowed', context);
-                return 'Tag not allowed';
+                widget.errorMessages!(
+                    {'key': widget.item['key'], 'error': 'Tag not allowed'});
+                return '';
               }
               if (stringTagController.getTags!.any(
                   (existingTag) => existingTag.toLowerCase() == lowerTag)) {
                 // showSnackBar('You\'ve already entered this tag', context);
+                widget.errorMessages!({
+                  'key': widget.item['key'],
+                  'error': 'You\'ve already entered this tag'
+                });
                 return 'You\'ve already entered this tag';
               }
 
