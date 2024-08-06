@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:json_to_form/json_schema.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class AutoCompleteWidget extends StatefulWidget {
@@ -8,7 +9,7 @@ class AutoCompleteWidget extends StatefulWidget {
   final Map decoration;
   final Map item;
   final Function(Map errorMessage)? errorMessages;
-  final Future<List<String>> Function(Map ref)? fetchOptions;
+  final Future<List<OptionWithColor>> Function(Map ref)? fetchOptions;
 
   AutoCompleteWidget({
     this.onChanged,
@@ -25,12 +26,12 @@ class AutoCompleteWidget extends StatefulWidget {
 
 class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
   final StringTagController stringTagController = StringTagController();
-  List<String> options = <String>[];
+  List<OptionWithColor> options = <OptionWithColor>[];
 
   @override
   Widget build(BuildContext context) {
     List<String> lowerTagsListNames =
-        options.map((e) => e.toLowerCase()).toList();
+        options.map((e) => e.option.toLowerCase()).toList();
     log('bbuuiiild item : ${stringTagController.getTags} | options : $options');
 
     String extractTextAfterLastSpace(String text) {
@@ -43,7 +44,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 5),
-      child: Autocomplete<String>(
+      child: Autocomplete<OptionWithColor>(
         optionsViewBuilder: (context, onSelected, options) {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
@@ -60,7 +61,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Wrap(
-                            children: options.map((String option) {
+                            children: options.map((OptionWithColor option) {
                               bool disable =
                                   stringTagController.getTags!.contains(option)
                                       ? true
@@ -69,7 +70,8 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                               return TextButton(
                                 onPressed: () {
                                   onSelected(option);
-                                  stringTagController.onTagSubmitted(option);
+                                  stringTagController
+                                      .onTagSubmitted(option.option);
                                   var tags = stringTagController.getTags;
                                   String savedTags = tags!.join(' ');
                                   widget.item['value'] = savedTags;
@@ -79,8 +81,8 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                                   log('Autocomplete widget onpressed : $option ,stringTagController tags : ${stringTagController.getTags}');
                                 },
                                 child: OptionBuiderItem(
-                                  color: disable ? Colors.grey : Colors.black,
-                                  option: option,
+                                  color: disable ? Colors.grey : option.color,
+                                  option: option.option,
                                 ),
                               );
                             }).toList(),
@@ -111,7 +113,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
               String lowerTag = tag.toLowerCase();
 
               if (!options
-                  .map((e) => e.toLowerCase())
+                  .map((e) => e.option.toLowerCase())
                   .toList()
                   .contains(lowerTag)) {
                 // showSnackBar('Tag not allowed', context);
@@ -160,7 +162,12 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                                     decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10.0)),
-                                      color: Colors.black,
+                                      color: options
+                                          .where((element) =>
+                                              element.option.toLowerCase() ==
+                                              tag.toLowerCase())
+                                          .first
+                                          .color,
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10.0, vertical: 4.0),
@@ -209,7 +216,7 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                   log('on changed text $text');
                   if (lowerText.split(' ').length > 1 &&
                       !options
-                          .map((e) => e.toLowerCase())
+                          .map((e) => e.option.toLowerCase())
                           .toList()
                           .contains(lowerText.trim())) {
                     inputFieldValues.textEditingController.clear();
@@ -221,11 +228,11 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
                   }
                   if (lowerText.split(' ').length > 1 ||
                       options
-                          .map((e) => e.toLowerCase())
+                          .map((e) => e..option.toLowerCase())
                           .toList()
                           .contains(lowerText.trim())) {
                     if (options
-                        .map((e) => e.toLowerCase())
+                        .map((e) => e.option.toLowerCase())
                         .toList()
                         .contains(lowerText.trim())) {
                       stringTagController.onTagSubmitted(lowerText.trim());
@@ -258,19 +265,21 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
           log('options $options');
           if (options.isNotEmpty) {
             if (textEditingValue.text.isEmpty) {
-              return const Iterable<String>.empty();
+              return const Iterable<OptionWithColor>.empty();
             }
             final String textAfterLastSpace =
                 extractTextAfterLastSpace(textEditingValue.text);
             if (textAfterLastSpace.isNotEmpty) {
-              return options.where((option) => option
-                  .toLowerCase()
-                  .contains(textAfterLastSpace.toLowerCase()));
+              return options
+                  .where((option) => option.option
+                      .toLowerCase()
+                      .contains(textAfterLastSpace.toLowerCase()))
+                  .map((option) => option);
             }
           }
-          return const Iterable<String>.empty();
+          return const Iterable<OptionWithColor>.empty();
         },
-        onSelected: (String selection) {
+        onSelected: (OptionWithColor selection) {
           log('Autocomplete widget onSelected: $selection');
         },
       ),

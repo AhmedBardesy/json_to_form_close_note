@@ -86,9 +86,9 @@ class _Login extends State<Login> {
               errorMessage: (p0) {
                 log('error: $p0');
               },
-              fetchOptions: fetchOptions,
+              fetchOptions: fetchOptionsItems,
               decorations: decorations,
-              form: savedForm,
+              form: form, // savedForm,
               onChanged: (dynamic response) {
                 this.response = response;
                 savedForm = jsonEncode(response);
@@ -120,17 +120,77 @@ class _Login extends State<Login> {
 }
 
 String savedForm = '';
-Future<List<String>> fetchOptions(Map data) async {
-  // Simulate fetching data from a data source based on the ref
-  // await Future.delayed(Duration(seconds: 1)); // Simulating network delay
+// Future<List<String>> fetchOptions(Map data) async {
+//   // Simulate fetching data from a data source based on the ref
+//   // await Future.delayed(Duration(seconds: 1)); // Simulating network delay
 
-  // Split the ref to get the table name and type
+//   // Split the ref to get the table name and type
+//   String ref = data['ref'];
+//   String text = data['text'];
+//   String optionTableName = ref.split(':').first;
+//   String optionTableType = ref.split(':').last;
+
+//   List<String> options = [];
+
+//   // Switch case based on table name
+//   switch (optionTableName) {
+//     case 'tagBox':
+//       // Nested switch case based on type
+//       switch (optionTableType) {
+//         case 'eval':
+//           options = tagBox
+//               .where((element) => element.type == 'eval')
+//               .map((e) => e.name)
+//               .toList();
+//           break;
+//         case 'sop':
+//           options = tagBox
+//               .where((element) => element.type == 'sop')
+//               .map((e) => e.name)
+//               .toList();
+//           break;
+//         case 'place':
+//           options = tagBox
+//               .where((element) => element.type == 'place')
+//               .map((e) => e.name)
+//               .toList();
+//           break;
+//         case 'org':
+//           options = tagBox
+//               .where((element) => element.type == 'org')
+//               .map((e) => e.name)
+//               .toList();
+//           break;
+//         case 'field':
+//           options = tagBox
+//               .where((element) => element.type == 'field')
+//               .map((e) => e.name)
+//               .toList();
+//           break;
+//         default:
+//           options = []; // Return an empty list if type does not match
+//           break;
+//       }
+//       break;
+//     default:
+//       options = []; // Return an empty list if table name does not match
+//       break;
+//   }
+
+//   // Filter options based on the text
+//   return options
+//       .where((name) => name.toLowerCase().contains(text.toLowerCase()))
+//       .toList();
+// }
+
+
+Future<List<OptionWithColor>> fetchOptionsItems(Map<dynamic, dynamic> data) async {
   String ref = data['ref'];
   String text = data['text'];
   String optionTableName = ref.split(':').first;
   String optionTableType = ref.split(':').last;
 
-  List<String> options = [];
+  List<OptionWithColor> optionsWithColors = [];
 
   // Switch case based on table name
   switch (optionTableName) {
@@ -138,47 +198,64 @@ Future<List<String>> fetchOptions(Map data) async {
       // Nested switch case based on type
       switch (optionTableType) {
         case 'eval':
-          options = tagBox
+          optionsWithColors = tagBox
               .where((element) => element.type == 'eval')
-              .map((e) => e.name)
+              .map((e) => OptionWithColor(e.name, colorItem(e.name, e.type[0])))
               .toList();
           break;
         case 'sop':
-          options = tagBox
+          optionsWithColors = tagBox
               .where((element) => element.type == 'sop')
-              .map((e) => e.name)
+              .map((e) => OptionWithColor(e.name, colorItem(e.name, e.type[0])))
               .toList();
           break;
         case 'place':
-          options = tagBox
+          optionsWithColors = tagBox
               .where((element) => element.type == 'place')
-              .map((e) => e.name)
+              .map((e) => OptionWithColor(e.name, colorItem(e.name, e.type[0])))
               .toList();
           break;
         case 'org':
-          options = tagBox
+          optionsWithColors = tagBox
               .where((element) => element.type == 'org')
-              .map((e) => e.name)
+              .map((e) => OptionWithColor(e.name, colorItem(e.name, e.type[0])))
               .toList();
           break;
         case 'field':
-          options = tagBox
+          optionsWithColors = tagBox
               .where((element) => element.type == 'field')
-              .map((e) => e.name)
+              .map((e) => OptionWithColor(e.name, colorItem(e.name, e.type[0])))
               .toList();
           break;
         default:
-          options = []; // Return an empty list if type does not match
+          optionsWithColors = []; // Return an empty list if type does not match
           break;
       }
       break;
     default:
-      options = []; // Return an empty list if table name does not match
+      optionsWithColors = []; // Return an empty list if table name does not match
       break;
   }
 
   // Filter options based on the text
-  return options
-      .where((name) => name.toLowerCase().contains(text.toLowerCase()))
+  return optionsWithColors
+      .where((option) => option.option.toLowerCase().contains(text.toLowerCase()))
       .toList();
+}
+
+
+Color colorItem(String tag,currenttagid ) {
+  // var currenttagid =
+  //     tagList.where((element) => element.name == tag).first.type[0];
+
+  Color optionColor = currenttagid == 'e'
+      ? Colors.purple
+      : currenttagid == 'p'
+          ? Colors.orange
+          : currenttagid == 'o'
+              ? Colors.yellow
+              : currenttagid == 's'
+                  ? Colors.red
+                  : Colors.green;
+  return optionColor;
 }

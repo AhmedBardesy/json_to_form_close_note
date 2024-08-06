@@ -38,7 +38,7 @@ class JsonSchema extends StatefulWidget {
   final Function? imageTap;
    final Function(Map<dynamic, dynamic>)? errorMessage;
   // final Map<String , List>? autoCompleteOptions;
-  final Future<List<String>> Function(Map ref)? fetchOptions;
+  final Future<List<OptionWithColor>> Function(Map ref)? fetchOptions;
 
   @override
   _CoreFormState createState() =>
@@ -211,4 +211,11 @@ class _CoreFormState extends State<JsonSchema> {
       ),
     );
   }
+}
+
+class OptionWithColor {
+  final String option;
+  final Color color;
+
+  OptionWithColor(this.option, this.color);
 }
