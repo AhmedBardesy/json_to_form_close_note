@@ -101,9 +101,9 @@ class _AutoCompleteWidgetState extends State<AutoCompleteWidget> {
             textfieldTagsController: stringTagController,
             textEditingController: textEditingController,
             focusNode: focusNode,
-            // initialTags: widget.item['value'] != null
-            //     ? widget.item['value'].toString().split(' ').toList()
-            //     : [],
+            initialTags: widget.item['value'] != null
+                ? widget.item['value'].split(' ').toList()
+                : [],
             validator: (String tag) {
               log('Autocomplete widget validator options : $options');
               log('validator tag  $tag');

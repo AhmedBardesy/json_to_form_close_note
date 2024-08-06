@@ -88,9 +88,11 @@ class _Login extends State<Login> {
               },
               fetchOptions: fetchOptions,
               decorations: decorations,
-              form: form,
+              form: savedForm,
               onChanged: (dynamic response) {
                 this.response = response;
+                savedForm = jsonEncode(response);
+                log('Saved form: $savedForm');
                 log('response: $response');
               },
               actionSave: (data) {
@@ -117,6 +119,7 @@ class _Login extends State<Login> {
   }
 }
 
+String savedForm = '';
 Future<List<String>> fetchOptions(Map data) async {
   // Simulate fetching data from a data source based on the ref
   // await Future.delayed(Duration(seconds: 1)); // Simulating network delay
